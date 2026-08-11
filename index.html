@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>W Suffers — How long can you suffer?</title>
+  <meta name="description" content="A fast-paced, original 3D 3-lane endless runner game. How long can you suffer? Made by Wyzuk.">
+  <meta name="theme-color" content="#0f0f1b">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+  <!-- Game Canvas Container -->
+  <div id="game-container">
+    <canvas id="three-canvas"></canvas>
+  </div>
+
+  <!-- UI Overlay Layer -->
+  <div id="ui-layer">
+
+    <!-- FPS Counter -->
+    <div id="fps-counter" class="hidden">FPS: <span id="fps-value">60</span></div>
+
+    <!-- Toast Notification Popup -->
+    <div id="toast-container"></div>
+
+    <!-- MAIN MENU SCREEN -->
+    <div id="screen-main-menu" class="ui-screen active">
+      <div class="menu-content glass-panel">
+        <div class="badge-pill">ORIGINAL 3D ENDLESS RUNNER</div>
+        <h1 class="game-title">
+          <span class="letter-w">W</span> SUFFERS
+        </h1>
+        <p class="subtitle">How long can you suffer?</p>
+
+        <!-- High Score Quick Stats -->
+        <div class="menu-stats-row">
+          <div class="stat-card">
+            <span class="stat-label">BEST SCORE</span>
+            <span class="stat-value" id="menu-best-score">0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">BEST DISTANCE</span>
+            <span class="stat-value" id="menu-best-distance">0m</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">TOTAL COINS</span>
+            <span class="stat-value" id="menu-total-coins">0</span>
+          </div>
+        </div>
+
+        <div class="menu-actions">
+          <button id="btn-start" class="btn btn-primary btn-large">
+            <span class="btn-icon">▶</span> PLAY NOW
+          </button>
+          <div class="button-grid">
+            <button id="btn-how-to-play" class="btn btn-secondary">
+              <span class="btn-icon">❓</span> HOW TO PLAY
+            </button>
+            <button id="btn-settings-main" class="btn btn-secondary">
+              <span class="btn-icon">⚙️</span> SETTINGS
+            </button>
+          </div>
+        </div>
+
+        <div class="dev-credits">
+          <p>Made by <strong class="highlight">Wyzuk</strong></p>
+          <a href="https://github.com/wyzuk" target="_blank" rel="noopener noreferrer" class="github-link">
+            <svg class="github-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            github.com/wyzuk
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- HUD OVERLAY (In Game) -->
+    <div id="hud-overlay" class="hidden">
+      <!-- Top Stats Bar -->
+      <div class="hud-top-bar">
+        <div class="hud-stat-box score-box">
+          <span class="hud-label">SCORE</span>
+          <span id="hud-score-val" class="hud-value">0</span>
+          <span id="hud-multiplier-badge" class="multiplier-badge">1X</span>
+        </div>
+
+        <div class="hud-center-group">
+          <div class="hud-stat-box best-box">
+            <span class="hud-label">BEST</span>
+            <span id="hud-best-val" class="hud-value">0</span>
+          </div>
+          <div class="hud-stat-box coins-box">
+            <span class="coin-icon-img">🪙</span>
+            <span id="hud-coins-val" class="hud-value">0</span>
+          </div>
+          <div class="hud-stat-box distance-box">
+            <span id="hud-distance-val" class="hud-value">0</span><span class="unit">m</span>
+          </div>
+        </div>
+
+        <button id="btn-pause-game" class="btn-circle pause-btn" aria-label="Pause Game">
+          ⏸
+        </button>
+      </div>
+
+      <!-- Active Power-ups Bar -->
+      <div id="active-powerups-container"></div>
+
+      <!-- Mobile Touch Controls Overlay (Dynamic or Toggleable) -->
+      <div id="mobile-touch-controls">
+        <div class="touch-lane-controls">
+          <button id="touch-left" class="touch-btn">◀</button>
+          <button id="touch-right" class="touch-btn">▶</button>
+        </div>
+        <div class="touch-action-controls">
+          <button id="touch-jump" class="touch-btn touch-action">▲ JUMP</button>
+          <button id="touch-slide" class="touch-btn touch-action">▼ SLIDE</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAUSE MENU MODAL -->
+    <div id="modal-pause" class="modal-overlay hidden">
+      <div class="modal-content glass-panel">
+        <h2 class="modal-title">GAME PAUSED</h2>
+        <div class="pause-actions">
+          <button id="btn-resume" class="btn btn-primary btn-large">RESUME</button>
+          <button id="btn-restart-pause" class="btn btn-secondary">RESTART</button>
+          <button id="btn-settings-pause" class="btn btn-secondary">SETTINGS</button>
+          <button id="btn-menu-pause" class="btn btn-danger">MAIN MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAME OVER SCREEN -->
+    <div id="screen-game-over" class="modal-overlay hidden">
+      <div class="modal-content glass-panel game-over-panel">
+        <div id="new-record-banner" class="new-record-banner hidden">🎉 NEW HIGH SCORE! 🎉</div>
+        <h2 class="game-over-title">YOU SUFFERED <span class="skull-emoji">💀</span></h2>
+        <p id="game-over-quote" class="funny-quote">"Skill issue detected."</p>
+
+        <div class="game-over-stats">
+          <div class="go-stat-card">
+            <span class="go-label">FINAL SCORE</span>
+            <span id="go-final-score" class="go-value highlight">0</span>
+          </div>
+          <div class="go-stat-card">
+            <span class="go-label">DISTANCE</span>
+            <span id="go-distance" class="go-value">0m</span>
+          </div>
+          <div class="go-stat-card">
+            <span class="go-label">COINS COLLECTED</span>
+            <span id="go-coins" class="go-value">0</span>
+          </div>
+          <div class="go-stat-card">
+            <span class="go-label">BEST SCORE</span>
+            <span id="go-best-score" class="go-value">0</span>
+          </div>
+        </div>
+
+        <div class="game-over-actions">
+          <button id="btn-retry" class="btn btn-primary btn-large pulse-animation">
+            <span class="btn-icon">🔄</span> TRY AGAIN
+          </button>
+          <button id="btn-menu-gameover" class="btn btn-secondary">
+            <span class="btn-icon">🏠</span> MAIN MENU
+          </button>
+        </div>
+
+        <div class="game-over-footer">
+          <p>W Suffers — Made by Wyzuk | <a href="https://github.com/wyzuk" target="_blank" rel="noopener noreferrer">github.com/wyzuk</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW TO PLAY MODAL -->
+    <div id="modal-how-to-play" class="modal-overlay hidden">
+      <div class="modal-content glass-panel modal-wide">
+        <div class="modal-header">
+          <h2>HOW TO PLAY</h2>
+          <button class="btn-close-modal" id="btn-close-how-to-play">✕</button>
+        </div>
+
+        <div class="instructions-grid">
+          <div class="instruction-card">
+            <h3>🎮 Controls</h3>
+            <ul class="control-list">
+              <li><kbd>A</kbd> / <kbd>←</kbd> : Move Left</li>
+              <li><kbd>D</kbd> / <kbd>→</kbd> : Move Right</li>
+              <li><kbd>W</kbd> / <kbd>↑</kbd> / <kbd>Space</kbd> : Jump</li>
+              <li><kbd>S</kbd> / <kbd>↓</kbd> : Slide Under Obstacles</li>
+              <li><span class="touch-highlight">Mobile:</span> Swipe Left/Right/Up/Down</li>
+            </ul>
+          </div>
+
+          <div class="instruction-card">
+            <h3>⚡ Power-Ups</h3>
+            <div class="powerup-info-list">
+              <div class="powerup-info-item">
+                <span class="pu-icon magnet">🧲</span>
+                <div>
+                  <strong>MAGNET</strong>
+                  <p>Attracts all nearby coins automatically!</p>
+                </div>
+              </div>
+              <div class="powerup-info-item">
+                <span class="pu-icon shield">🛡️</span>
+                <div>
+                  <strong>SHIELD</strong>
+                  <p>Protects you from 1 fatal collision!</p>
+                </div>
+              </div>
+              <div class="powerup-info-item">
+                <span class="pu-icon multiplier">✖️2</span>
+                <div>
+                  <strong>2X MULTIPLIER</strong>
+                  <p>Doubles all score gains while active.</p>
+                </div>
+              </div>
+              <div class="powerup-info-item">
+                <span class="pu-icon speedboost">⚡</span>
+                <div>
+                  <strong>SPEED BOOST</strong>
+                  <p>Jetpack mode! Invincible super speed!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="funny-tip-box">
+          <span class="tip-icon">💡</span>
+          <p><em>Pro Tip: The longer you run, the faster and more chaotic it gets. Suffer gracefully!</em></p>
+        </div>
+
+        <div class="modal-footer">
+          <button id="btn-got-it" class="btn btn-primary">GOT IT! LET'S RUN</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="modal-settings" class="modal-overlay hidden">
+      <div class="modal-content glass-panel modal-medium">
+        <div class="modal-header">
+          <h2>SETTINGS</h2>
+          <button class="btn-close-modal" id="btn-close-settings">✕</button>
+        </div>
+
+        <div class="settings-form">
+          <div class="setting-group">
+            <label for="setting-music-vol">Music Volume: <span id="val-music-vol">70%</span></label>
+            <input type="range" id="setting-music-vol" min="0" max="100" value="70">
+          </div>
+
+          <div class="setting-group">
+            <label for="setting-sfx-vol">Sound Effects (SFX): <span id="val-sfx-vol">80%</span></label>
+            <input type="range" id="setting-sfx-vol" min="0" max="100" value="80">
+          </div>
+
+          <div class="setting-group">
+            <label for="setting-graphics">Graphics Quality:</label>
+            <select id="setting-graphics" class="select-input">
+              <option value="high" selected>High (Shadows, Full Particles)</option>
+              <option value="medium">Medium (Standard FX)</option>
+              <option value="low">Low (Fast / Best Performance)</option>
+            </select>
+          </div>
+
+          <div class="setting-toggle-row">
+            <label for="setting-shake">Camera Shake Effects:</label>
+            <input type="checkbox" id="setting-shake" checked class="toggle-checkbox">
+          </div>
+
+          <div class="setting-toggle-row">
+            <label for="setting-fps">Show FPS Counter:</label>
+            <input type="checkbox" id="setting-fps" class="toggle-checkbox">
+          </div>
+
+          <div class="setting-toggle-row">
+            <label for="setting-on-screen-controls">On-Screen Touch Buttons (Mobile):</label>
+            <input type="checkbox" id="setting-on-screen-controls" class="toggle-checkbox">
+          </div>
+
+          <div class="danger-zone">
+            <button id="btn-reset-scores" class="btn btn-danger-outline">
+              🗑️ Reset High Scores & Stats
+            </button>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="btn-save-settings" class="btn btn-primary">SAVE & CLOSE</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Game JavaScript Modules -->
+  <script type="module" src="js/main.js"></script>
+
+</body>
+</html>
