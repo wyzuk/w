@@ -1,6 +1,4 @@
-/* ==========================================================================
    W SUFFERS — Web Audio API Procedural Sound & Music Synthesizer
-   ========================================================================== */
 
 export class AudioManager {
   constructor() {
@@ -57,7 +55,6 @@ export class AudioManager {
     if (this.sfxGain) this.sfxGain.gain.value = this.sfxVolume;
   }
 
-  // --- SOUND EFFECTS SYNTHESIZER ---
 
   playCoinSound(isWCoin = false) {
     if (!this.initialized || this.sfxVolume <= 0) return;
@@ -69,13 +66,11 @@ export class AudioManager {
 
     osc.type = 'triangle';
     if (isWCoin) {
-      // High sparkle pitch sequence
       osc.frequency.setValueAtTime(880, t);
       osc.frequency.exponentialRampToValueAtTime(1760, t + 0.15);
       gain.gain.setValueAtTime(0.4, t);
       gain.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
     } else {
-      // Crisp dual coin ding
       osc.frequency.setValueAtTime(987.77, t); // B5
       osc.frequency.setValueAtTime(1318.51, t + 0.06); // E6
       gain.gain.setValueAtTime(0.3, t);
@@ -116,7 +111,6 @@ export class AudioManager {
     this.resume();
 
     const t = this.ctx.currentTime;
-    // White noise swoosh effect
     const bufferSize = this.ctx.sampleRate * 0.2;
     const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
     const data = buffer.getChannelData(0);
@@ -195,7 +189,6 @@ export class AudioManager {
     this.resume();
 
     const t = this.ctx.currentTime;
-    // Heavy low crash / impact thud
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
 
@@ -235,7 +228,6 @@ export class AudioManager {
     osc.stop(t + 0.05);
   }
 
-  // --- BACKGROUND SYNTH MUSIC SEQUENCER ---
 
   startMusic() {
     if (!this.initialized || this.isPlayingMusic) return;
@@ -255,7 +247,6 @@ export class AudioManager {
       const t = this.ctx.currentTime;
       const step = this.currentStep % 16;
 
-      // Bass synth beat
       const bassFreq = bassNotes[Math.floor(step / 2) % bassNotes.length];
       if (bassFreq > 0 && step % 2 === 0) {
         const osc = this.ctx.createOscillator();
@@ -273,7 +264,6 @@ export class AudioManager {
         osc.stop(t + stepDuration * 1.5);
       }
 
-      // Melody arp synth
       const melFreq = melodyNotes[step % melodyNotes.length];
       if (melFreq > 0) {
         const osc = this.ctx.createOscillator();

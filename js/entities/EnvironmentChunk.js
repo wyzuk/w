@@ -1,6 +1,4 @@
-/* ==========================================================================
    W SUFFERS — Procedural Environment Chunk & Track Segment
-   ========================================================================== */
 
 import { CONFIG } from '../config.js';
 import { MathUtils } from '../utils/MathUtils.js';
@@ -30,7 +28,6 @@ export class EnvironmentChunk {
   buildTrackAndScenery() {
     const length = CONFIG.CHUNK_LENGTH;
 
-    // 1. Track Ground Mesh (Extends from z=0 to z=-length)
     const groundGeo = new THREE.BoxGeometry(12, 0.4, length);
     const groundMat = new THREE.MeshStandardMaterial({
       color: this.theme.groundColor,
@@ -41,7 +38,6 @@ export class EnvironmentChunk {
     ground.receiveShadow = true;
     this.group.add(ground);
 
-    // 2. Glowing Neon Side Strips
     const stripMat = new THREE.MeshStandardMaterial({
       color: this.theme.accentColor,
       emissive: this.theme.accentColor,
@@ -54,7 +50,6 @@ export class EnvironmentChunk {
     rightStrip.position.x = 5.0;
     this.group.add(leftStrip, rightStrip);
 
-    // 3. Railway / Lane Dividers along -Z
     const lineMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.3 });
     const lineGeo = new THREE.BoxGeometry(0.08, 0.02, 3);
     for (let z = -2; z > -length; z -= 6) {
@@ -65,7 +60,6 @@ export class EnvironmentChunk {
       this.group.add(l1, l2);
     }
 
-    // 4. Side Scenery / Buildings / Pipes based on Theme
     if (this.theme.id === 'underground') {
       this.buildTunnelArches(length);
     } else {
@@ -78,7 +72,6 @@ export class EnvironmentChunk {
     const windowMat = new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xffd700, emissiveIntensity: 0.5 });
 
     for (let z = -5; z > -length; z -= 16) {
-      // Left & Right Skyscrapers
       [-10, 10].forEach(xPos => {
         const height = MathUtils.randRange(18, 38);
         const bGeo = new THREE.BoxGeometry(8, height, 12);
@@ -89,7 +82,6 @@ export class EnvironmentChunk {
         building.receiveShadow = true;
         this.group.add(building);
 
-        // Windows grid
         const winGeo = new THREE.BoxGeometry(0.1, 0.8, 0.8);
         for (let wy = 4; wy < height - 2; wy += 4) {
           const win = new THREE.Mesh(winGeo, windowMat);
@@ -98,7 +90,6 @@ export class EnvironmentChunk {
         }
       });
 
-      // Funny Billboard Sign on overhead arch every 2 chunks
       if (z === -21 && Math.random() > 0.3) {
         this.buildBillboardArch(z);
       }
@@ -125,7 +116,6 @@ export class EnvironmentChunk {
     const metalMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.7 });
     const signText = MathUtils.randChoice(CONFIG.FUNNY_SIGNS);
 
-    // Gantry Structure
     const gantryGeo = new THREE.BoxGeometry(11, 0.5, 0.5);
     const gantry = new THREE.Mesh(gantryGeo, metalMat);
     gantry.position.set(0, 5.5, zRel);
@@ -136,14 +126,12 @@ export class EnvironmentChunk {
     const leg2 = leg1.clone();
     leg2.position.x = 5.2;
 
-    // Billboard Panel
     const panelGeo = new THREE.BoxGeometry(6.5, 1.8, 0.2);
     const canvas = document.createElement('canvas');
     canvas.width = 512;
     canvas.height = 128;
     const ctx = canvas.getContext('2d');
 
-    // Canvas styling for Billboard Text
     ctx.fillStyle = '#0f172a';
     ctx.fillRect(0, 0, 512, 128);
     ctx.strokeStyle = '#00e5ff';
@@ -159,19 +147,15 @@ export class EnvironmentChunk {
     const texture = new THREE.CanvasTexture(canvas);
     const panelMat = new THREE.MeshBasicMaterial({ map: texture });
     const panel = new THREE.Mesh(panelGeo, panelMat);
-    // Face text towards +Z so player running from +Z towards -Z sees the text!
     panel.position.set(0, 5.5, zRel + 0.15);
 
     this.group.add(gantry, leg1, leg2, panel);
   }
 
-  // --- POPULATE OBSTACLES & COIN PATTERNS ---
   populateObstaclesAndCoins() {
     const laneIndices = [0, 1, 2];
 
-    // Pick 2 obstacle rows per chunk (e.g. zOffset = 18 and 42 into negative Z)
     [18, 42].forEach(zOffset => {
-      // Keep at least 1 lane open so player can always dodge!
       const openLane = MathUtils.randChoice(laneIndices);
       const blockedLanes = laneIndices.filter(l => l !== openLane);
 
@@ -185,7 +169,6 @@ export class EnvironmentChunk {
       });
     });
 
-    // Spawn Coin Line in the Open Lane or over low barriers
     const coinLane = MathUtils.randChoice(laneIndices);
     const startZOffset = 8;
     for (let i = 0; i < 6; i++) {
@@ -195,7 +178,6 @@ export class EnvironmentChunk {
       this.collectibles.push(coin);
     }
 
-    // Occasional Powerup spawn (25% chance per chunk)
     if (Math.random() < 0.25) {
       const puType = MathUtils.randChoice(['magnet', 'shield', 'multiplier', 'speedboost']);
       const puLane = MathUtils.randChoice(laneIndices);

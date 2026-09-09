@@ -1,6 +1,4 @@
-/* ==========================================================================
    W SUFFERS — Main Game Engine & Loop Entry Point
-   ========================================================================== */
 
 import { CONFIG } from './config.js';
 import { StorageManager } from './utils/Storage.js';
@@ -203,7 +201,6 @@ class GameEngine {
     }, 600);
   }
 
-  // --- MAIN ENGINE LOOP ---
   gameLoop(timestamp) {
     requestAnimationFrame((t) => this.gameLoop(t));
 
@@ -214,24 +211,19 @@ class GameEngine {
       const isSpeedBoost = this.powerUpManager.isSpeedBoostActive();
       const isMultiplier = this.powerUpManager.isMultiplierActive();
 
-      // 1. Difficulty & Speed Scaling
       this.difficultySystem.update(delta, this.distance);
       const currentSpeed = this.difficultySystem.getSpeed(isSpeedBoost);
 
-      // 2. Advance Player Distance & Forward Movement (-Z direction)
       const forwardDelta = currentSpeed * delta;
       this.character.position.z -= forwardDelta;
       this.distance = -this.character.position.z;
 
-      // 3. Update Score Continuous Ticker
       const mult = isMultiplier ? 2 : 1;
       this.multiplier = mult;
       this.score += forwardDelta * CONFIG.SCORE.DISTANCE_MULTIPLIER * mult;
 
-      // 4. Update Character & Limbs
       this.character.update(delta, currentSpeed);
 
-      // 5. Update Power-ups, Particles & World Chunks
       this.powerUpManager.update(delta);
       this.chunkManager.update(this.character.position.z, delta);
       this.particleSystem.update(delta);
@@ -241,10 +233,8 @@ class GameEngine {
         this.particleSystem.emitRunDust(this.character.position);
       }
 
-      // 6. Check Collisions
       this.collisionSystem.update(this.character, this.chunkManager);
 
-      // 7. Update Camera
       const settings = StorageManager.getSettings();
       this.cameraManager.setSpeedBoostFOV(isSpeedBoost);
       this.cameraManager.update(
@@ -254,7 +244,6 @@ class GameEngine {
         settings.cameraShake
       );
 
-      // 8. Update HUD & Powerup Bars
       this.uiManager.updateHUD(this.score, this.coinsCollected, this.distance, this.multiplier);
       this.uiManager.updateActivePowerupsUI(this.powerUpManager.activePowerUps);
 
@@ -274,7 +263,6 @@ class GameEngine {
       this.cameraManager.setMenuMode();
 
     } else if (this.state === 'GAMEOVER') {
-      // Death tumble animation continues
       this.character.update(delta, 0);
       this.particleSystem.update(delta);
     }

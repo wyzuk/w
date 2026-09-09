@@ -1,6 +1,4 @@
-/* ==========================================================================
    W SUFFERS — Input Manager (Keyboard, Touch Swipes, Virtual Controls)
-   ========================================================================== */
 
 export class InputManager {
   constructor() {
@@ -35,7 +33,6 @@ export class InputManager {
 
   initKeyboard() {
     window.addEventListener('keydown', (e) => {
-      // Prevent default scrolling for arrows and space
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', ' '].includes(e.key)) {
         e.preventDefault();
       }
@@ -81,14 +78,12 @@ export class InputManager {
 
       if (Math.max(absDx, absDy) > this.swipeThreshold) {
         if (absDx > absDy) {
-          // Horizontal Swipe
           if (dx > 0) {
             this.trigger('moveRight');
           } else {
             this.trigger('moveLeft');
           }
         } else {
-          // Vertical Swipe
           if (dy > 0) {
             this.trigger('slide');
           } else {

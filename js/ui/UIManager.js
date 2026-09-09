@@ -1,6 +1,4 @@
-/* ==========================================================================
    W SUFFERS — UI & Overlay Screen Manager
-   ========================================================================== */
 
 import { StorageManager } from '../utils/Storage.js';
 import { audio } from '../utils/Audio.js';
@@ -11,7 +9,6 @@ export class UIManager {
   constructor(gameEngine) {
     this.game = gameEngine;
 
-    // Elements
     this.screenMainMenu = document.getElementById('screen-main-menu');
     this.hudOverlay = document.getElementById('hud-overlay');
     this.modalPause = document.getElementById('modal-pause');
@@ -19,7 +16,6 @@ export class UIManager {
     this.modalHowToPlay = document.getElementById('modal-how-to-play');
     this.modalSettings = document.getElementById('modal-settings');
 
-    // HUD Elements
     this.hudScore = document.getElementById('hud-score-val');
     this.hudMultiplier = document.getElementById('hud-multiplier-badge');
     this.hudCoins = document.getElementById('hud-coins-val');
@@ -27,12 +23,10 @@ export class UIManager {
     this.hudBest = document.getElementById('hud-best-val');
     this.activePowerupsContainer = document.getElementById('active-powerups-container');
 
-    // Main Menu Stats
     this.menuBestScore = document.getElementById('menu-best-score');
     this.menuBestDistance = document.getElementById('menu-best-distance');
     this.menuTotalCoins = document.getElementById('menu-total-coins');
 
-    // Game Over Elements
     this.goFinalScore = document.getElementById('go-final-score');
     this.goDistance = document.getElementById('go-distance');
     this.goCoins = document.getElementById('go-coins');
@@ -40,7 +34,6 @@ export class UIManager {
     this.goQuote = document.getElementById('game-over-quote');
     this.newRecordBanner = document.getElementById('new-record-banner');
 
-    // Toast Container
     this.toastContainer = document.getElementById('toast-container');
 
     this.initEventListeners();
@@ -48,7 +41,6 @@ export class UIManager {
   }
 
   initEventListeners() {
-    // Main Menu Buttons
     document.getElementById('btn-start').addEventListener('click', () => {
       audio.playButtonClick();
       this.game.startGame();
@@ -75,13 +67,11 @@ export class UIManager {
       this.openSettings();
     });
 
-    // HUD Pause Button
     document.getElementById('btn-pause-game').addEventListener('click', () => {
       audio.playButtonClick();
       this.game.pauseGame();
     });
 
-    // Pause Menu Buttons
     document.getElementById('btn-resume').addEventListener('click', () => {
       audio.playButtonClick();
       this.game.resumeGame();
@@ -104,7 +94,6 @@ export class UIManager {
       this.game.showMainMenu();
     });
 
-    // Game Over Buttons
     document.getElementById('btn-retry').addEventListener('click', () => {
       audio.playButtonClick();
       this.hideScreen(this.screenGameOver);
@@ -117,7 +106,6 @@ export class UIManager {
       this.game.showMainMenu();
     });
 
-    // Settings Modal Buttons & Inputs
     document.getElementById('btn-close-settings').addEventListener('click', () => {
       audio.playButtonClick();
       this.hideModal(this.modalSettings);
@@ -137,7 +125,6 @@ export class UIManager {
       }
     });
 
-    // Settings Live Sliders Label updates
     const musicSlider = document.getElementById('setting-music-vol');
     const sfxSlider = document.getElementById('setting-sfx-vol');
     if (musicSlider) {

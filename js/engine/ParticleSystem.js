@@ -1,6 +1,4 @@
-/* ==========================================================================
    W SUFFERS — Particle & Visual Effects Engine
-   ========================================================================== */
 
 export class ParticleSystem {
   constructor(scene) {
@@ -8,7 +6,6 @@ export class ParticleSystem {
     this.particles = [];
     this.particlePool = [];
 
-    // Reuse geometries and materials for performance
     this.boxGeo = new THREE.BoxGeometry(0.15, 0.15, 0.15);
     this.sphereGeo = new THREE.SphereGeometry(0.12, 6, 6);
 
@@ -44,7 +41,6 @@ export class ParticleSystem {
     this.particles.push(p);
   }
 
-  // --- PRESET PARTICLE EMITTERS ---
 
   emitRunDust(pos) {
     for (let i = 0; i < 2; i++) {
@@ -115,12 +111,9 @@ export class ParticleSystem {
         this.particlePool.push(p);
         this.particles.splice(i, 1);
       } else {
-        // Move particle
         p.mesh.position.addScaledVector(p.vel, delta);
         p.vel.y -= 9.8 * delta * 0.5; // Light gravity
-        // Fade out opacity
         p.mesh.material.opacity = p.life / p.maxLife;
-        // Shrink slightly
         const scale = (p.life / p.maxLife);
         p.mesh.scale.setScalar(scale);
       }

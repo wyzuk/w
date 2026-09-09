@@ -1,6 +1,4 @@
-/* ==========================================================================
    W SUFFERS — Procedural 3D Obstacles Factory & Mesh Creator
-   ========================================================================== */
 
 import { CONFIG } from '../config.js';
 
@@ -44,12 +42,10 @@ export class Obstacle {
     }
   }
 
-  // Low Barrier (Must Jump Over: Height ~0.9m)
   buildLowBarrier() {
     const frameMat = new THREE.MeshStandardMaterial({ color: 0xffaa00, roughness: 0.4 });
     const stripeMat = new THREE.MeshStandardMaterial({ color: 0x111827 });
 
-    // Feet
     const footGeo = new THREE.BoxGeometry(0.3, 0.15, 0.8);
     const f1 = new THREE.Mesh(footGeo, stripeMat);
     f1.position.set(-1.1, 0.08, 0);
@@ -57,14 +53,12 @@ export class Obstacle {
     f2.position.x = 1.1;
     this.group.add(f1, f2);
 
-    // Main Barricade Plank
     const plankGeo = new THREE.BoxGeometry(2.4, 0.5, 0.12);
     const plank = new THREE.Mesh(plankGeo, frameMat);
     plank.position.set(0, 0.65, 0);
     plank.castShadow = true;
     this.group.add(plank);
 
-    // Hazard Stripe Pattern
     const stripeGeo = new THREE.BoxGeometry(0.3, 0.52, 0.14);
     for (let x = -0.9; x <= 0.9; x += 0.6) {
       const s = new THREE.Mesh(stripeGeo, stripeMat);
@@ -73,12 +67,10 @@ export class Obstacle {
     }
   }
 
-  // Overhead Barrier (Must Slide Under: Height starts at 1.4m, leaves 1.1m clearance under)
   buildOverheadBarrier() {
     const metalMat = new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.8, roughness: 0.3 });
     const signMat = new THREE.MeshStandardMaterial({ color: 0xff007f, emissive: 0xff007f, emissiveIntensity: 0.5 });
 
-    // Side Support Poles
     const poleGeo = new THREE.CylinderGeometry(0.1, 0.1, 3.2, 8);
     const p1 = new THREE.Mesh(poleGeo, metalMat);
     p1.position.set(-1.25, 1.6, 0);
@@ -86,14 +78,12 @@ export class Obstacle {
     p2.position.x = 1.25;
     this.group.add(p1, p2);
 
-    // High Crossbar
     const barGeo = new THREE.BoxGeometry(2.7, 0.8, 0.3);
     const bar = new THREE.Mesh(barGeo, metalMat);
     bar.position.set(0, 2.0, 0);
     bar.castShadow = true;
     this.group.add(bar);
 
-    // Hanging Low Hazard Sign
     const signGeo = new THREE.BoxGeometry(2.2, 0.6, 0.15);
     const sign = new THREE.Mesh(signGeo, signMat);
     sign.position.set(0, 1.4, 0); // Clearance under sign is ~1.1m
@@ -101,14 +91,12 @@ export class Obstacle {
     this.group.add(sign);
   }
 
-  // Train / Subway Car (Height 3.5m, Width 2.4m, Length 14m)
   buildTrain() {
     const bodyMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.3, metalness: 0.7 });
     const roofMat = new THREE.MeshStandardMaterial({ color: 0x00e5ff, emissive: 0x00e5ff, emissiveIntensity: 0.2 });
     const windowMat = new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xffd700, emissiveIntensity: 0.8 });
     const headlightMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 1.0 });
 
-    // Main Train Body
     const bodyGeo = new THREE.BoxGeometry(2.5, 3.2, 14);
     const body = new THREE.Mesh(bodyGeo, bodyMat);
     body.position.y = 1.7;
@@ -116,13 +104,11 @@ export class Obstacle {
     body.receiveShadow = true;
     this.group.add(body);
 
-    // Roof Strip
     const roofGeo = new THREE.BoxGeometry(2.3, 0.2, 13.8);
     const roof = new THREE.Mesh(roofGeo, roofMat);
     roof.position.y = 3.35;
     this.group.add(roof);
 
-    // Glowing Side Windows
     const winGeo = new THREE.BoxGeometry(2.54, 0.6, 1.2);
     for (let z = -5; z <= 5; z += 2.4) {
       const win = new THREE.Mesh(winGeo, windowMat);
@@ -130,7 +116,6 @@ export class Obstacle {
       this.group.add(win);
     }
 
-    // Front Headlights facing +Z towards runner
     const hlGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 12);
     hlGeo.rotateX(Math.PI / 2);
     const hl1 = new THREE.Mesh(hlGeo, headlightMat);
@@ -140,7 +125,6 @@ export class Obstacle {
     this.group.add(hl1, hl2);
   }
 
-  // Stationary Barrier / Construction Fence
   buildStationaryBarrier() {
     const fenceMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.5 });
     const baseMat = new THREE.MeshStandardMaterial({ color: 0x374151 });
@@ -157,7 +141,6 @@ export class Obstacle {
     this.group.add(fence);
   }
 
-  // Crates Stack
   buildCrates() {
     const woodMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.8 });
     const crateGeo = new THREE.BoxGeometry(1.1, 1.1, 1.1);
@@ -179,7 +162,6 @@ export class Obstacle {
 
   update(delta) {
     if (this.isMoving) {
-      // Moving train moves in +Z direction towards player
       this.group.position.z += this.moveSpeed * delta;
     }
   }
@@ -196,7 +178,6 @@ export class Obstacle {
       size.set(2.4, 0.9, 0.6);
       centerOffset.set(0, 0.45, 0);
     } else if (this.type === 'overhead_barrier') {
-      // Only collides at upper height (1.2m to 2.5m)
       size.set(2.5, 1.3, 0.5);
       centerOffset.set(0, 1.85, 0);
     } else if (this.type === 'train' || this.type === 'moving_train') {

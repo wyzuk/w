@@ -1,6 +1,4 @@
-/* ==========================================================================
    W SUFFERS — Procedural Chunk & Endless World Manager
-   ========================================================================== */
 
 import { CONFIG } from '../config.js';
 import { EnvironmentChunk } from '../entities/EnvironmentChunk.js';
@@ -27,7 +25,6 @@ export class ChunkManager {
   }
 
   spawnNextChunk() {
-    // Switch theme every 5 chunks
     if (this.currentChunkIndex > 0 && this.currentChunkIndex % 5 === 0) {
       this.currentThemeIndex = (this.currentThemeIndex + 1) % CONFIG.THEMES.length;
       this.sceneManager.applyTheme(CONFIG.THEMES[this.currentThemeIndex]);
@@ -47,15 +44,12 @@ export class ChunkManager {
   }
 
   update(playerZ, delta) {
-    // Update active chunks internal animations (moving trains, etc.)
     this.chunks.forEach(c => c.update(delta));
 
-    // Spawn new chunk if runner approaches front end (into negative Z)
     if (playerZ - (CONFIG.INITIAL_CHUNKS - 2) * CONFIG.CHUNK_LENGTH < this.nextSpawnZ) {
       this.spawnNextChunk();
     }
 
-    // Recycle chunks that are far behind player camera (+Z direction)
     if (this.chunks.length > 0) {
       const firstChunk = this.chunks[0];
       if (firstChunk.zPos > playerZ + 25) {

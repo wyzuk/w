@@ -1,6 +1,4 @@
-/* ==========================================================================
    W SUFFERS — LocalStorage & Data Storage Manager
-   ========================================================================== */
 
 const STORAGE_KEYS = {
   HIGH_SCORE: 'w_suffers_high_score',

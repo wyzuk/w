@@ -1,6 +1,4 @@
-/* ==========================================================================
    W SUFFERS — Game Configurations & Constants
-   ========================================================================== */
 
 export const CONFIG = {
   // World & Track
@@ -90,7 +88,6 @@ export const CONFIG = {
     W_COIN_VALUE: 500,
   },
 
-  // Funny Billboard Text Messages
   FUNNY_SIGNS: [
     "BRO RUN 🏃‍♂️",
     "WHY ARE YOU STILL RUNNING?",

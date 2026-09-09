@@ -1,16 +1,12 @@
-/* ==========================================================================
    W SUFFERS — Scene & Lighting Manager
-   ========================================================================== */
 
 export class SceneManager {
   constructor(canvas) {
     this.canvas = canvas;
 
-    // Three.js Core Components
     this.scene = new THREE.Scene();
     this.renderer = null;
 
-    // Lighting
     this.dirLight = null;
     this.ambientLight = null;
     this.hemiLight = null;
@@ -42,20 +38,16 @@ export class SceneManager {
   }
 
   initLighting() {
-    // Ambient Light
     this.ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     this.scene.add(this.ambientLight);
 
-    // Hemisphere Light (Sky / Ground gradient)
     this.hemiLight = new THREE.HemisphereLight(0x00e5ff, 0x1f2937, 0.5);
     this.scene.add(this.hemiLight);
 
-    // Directional Sun / Main Light
     this.dirLight = new THREE.DirectionalLight(0xfff0dd, 1.2);
     this.dirLight.position.set(20, 40, -10);
     this.dirLight.castShadow = true;
 
-    // Shadow Map Tuning
     this.dirLight.shadow.mapSize.width = 1024;
     this.dirLight.shadow.mapSize.height = 1024;
     this.dirLight.shadow.camera.near = 0.5;
@@ -70,7 +62,6 @@ export class SceneManager {
   }
 
   initFog() {
-    // Exponential atmospheric fog to hide chunk spawning far ahead
     this.scene.fog = new THREE.FogExp2(0x0f172a, 0.009);
   }
 

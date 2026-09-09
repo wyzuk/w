@@ -1,6 +1,4 @@
-/* ==========================================================================
    W SUFFERS — Procedural Collectibles & Power-Ups
-   ========================================================================== */
 
 import { CONFIG } from '../config.js';
 import { MathUtils } from '../utils/MathUtils.js';
@@ -48,7 +46,6 @@ export class Collectible {
     }
   }
 
-  // Standard or W Gold Coin
   buildCoinMesh(colorHex, scale = 1.0, isW = false) {
     const coinGeo = new THREE.CylinderGeometry(0.4 * scale, 0.4 * scale, 0.1 * scale, 16);
     coinGeo.rotateX(Math.PI / 2);
@@ -66,7 +63,6 @@ export class Collectible {
     this.group.add(mesh);
   }
 
-  // Magnet Power-up Mesh
   buildMagnetMesh() {
     const magMat = new THREE.MeshStandardMaterial({
       color: 0xff3366,
@@ -89,7 +85,6 @@ export class Collectible {
     this.group.add(arch, tip1, tip2);
   }
 
-  // Shield Power-up Mesh
   buildShieldMesh() {
     const mat = new THREE.MeshStandardMaterial({
       color: 0x00e5ff,
@@ -103,7 +98,6 @@ export class Collectible {
     this.group.add(mesh);
   }
 
-  // Multiplier 2x Mesh
   buildMultiplierMesh() {
     const mat = new THREE.MeshStandardMaterial({
       color: 0xa855f7,
@@ -116,7 +110,6 @@ export class Collectible {
     this.group.add(mesh);
   }
 
-  // Speed Boost Lightning Mesh
   buildSpeedBoostMesh() {
     const mat = new THREE.MeshStandardMaterial({
       color: 0xffd700,
@@ -133,15 +126,12 @@ export class Collectible {
   update(delta, playerPos = null, isMagnetActive = false) {
     if (this.isCollected) return;
 
-    // 1. Rotation and Bobbing Animation
     this.group.rotation.y += this.rotSpeed * delta;
     this.group.position.y = this.yPos + Math.sin(Date.now() * 0.005 + this.zPos) * 0.15;
 
-    // 2. Magnet Power-up Attraction Logic
     if (isMagnetActive && (this.type === 'coin' || this.type === 'w_coin') && playerPos) {
       const dist = this.group.position.distanceTo(playerPos);
       if (dist < 14) {
-        // Smoothly pull coin towards player position
         this.group.position.lerp(playerPos, delta * 14);
       }
     }
